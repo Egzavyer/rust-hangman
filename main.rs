@@ -1,43 +1,40 @@
 use std::io::{self, Write};
 
+struct State {
+    guess_vec: Vec<char>,
+    remaining_letters: usize,
+    remaining_errors: u8,
+}
+
 fn main() {
     let word: Vec<char> = ask_word();
     let word_size: usize = word.len();
-    let mut guess_vec: Vec<char> = vec!['_'; word.len()];
-    let mut remaining_letters: usize = word_size;
-    let mut remaining_errors: u8 = 7;
+    let mut state = State {
+        guess_vec: vec!['_'; word_size],
+        remaining_letters: word_size,
+        remaining_errors: 7,
+    };
 
-    //show empty slots for letters and hangman (7 tries)
-    //  _ _
-    // |   O
-    // |  /|\
-    // |   |
-    // |  / \
-
-    //ask for guess
-    //find locations of the guessed letter in the word, add them to guess vector and display them on the slots
-    //win when remaining letters = 0
-    while remaining_letters > 0 && remaining_errors > 0 {
-        println!("{}", draw_hangman(remaining_errors));
+    while state.remaining_letters > 0 && state.remaining_errors > 0 {
+        println!("{}", draw_hangman(state.remaining_errors));
         print!("\n     ");
         for i in 0..word_size {
-            print!("{} ", guess_vec[i]);
+            print!("{} ", state.guess_vec[i]);
         }
-        println!("\n\n{} Letters", word_size);
-        println!("{} Errors Remaining", remaining_errors);
+        println!("\n\n{} Letters Remaining", state.remaining_letters);
+        println!("{} Errors Remaining", state.remaining_errors);
         let guess: char = ask_guess();
-        if !is_good_guess(&guess, &mut guess_vec, &word) {
-            remaining_errors = remaining_errors - 1;
+        if !is_good_guess(&guess, &mut state, &word) {
+            state.remaining_errors -= 1;
             println!("Wrong! '{}' is not in the word!", guess);
         } else {
-            remaining_letters = remaining_letters - 1;
             println!("Correct! '{}' is in the word!", guess);
         }
     }
-    println!("{}", draw_hangman(remaining_errors));
-    if remaining_letters == 0 {
+    println!("{}", draw_hangman(state.remaining_errors));
+    if state.remaining_letters == 0 {
         println!("You Won!");
-    } else if remaining_errors == 0 {
+    } else if state.remaining_errors == 0 {
         println!("You Lose!");
     }
 }
@@ -63,12 +60,13 @@ fn ask_guess() -> char {
     return guess.trim().chars().next().unwrap();
 }
 
-fn is_good_guess(guess: &char, guess_vec: &mut Vec<char>, word: &Vec<char>) -> bool {
+fn is_good_guess(guess: &char, state: &mut State, word: &Vec<char>) -> bool {
     let mut found = false;
     for i in 0..word.len() {
         if word[i] == *guess {
             found = true;
-            guess_vec[i] = *guess;
+            state.remaining_letters -= 1;
+            state.guess_vec[i] = *guess;
         }
     }
     return found;
