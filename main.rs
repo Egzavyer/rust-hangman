@@ -16,6 +16,7 @@ fn main() {
     };
 
     while state.remaining_letters > 0 && state.remaining_errors > 0 {
+        clear_terminal();
         println!("{}", draw_hangman(state.remaining_errors));
         print!("\n     ");
         for i in 0..word_size {
@@ -31,11 +32,12 @@ fn main() {
             println!("Correct! '{}' is in the word!", guess);
         }
     }
+    clear_terminal();
     println!("{}", draw_hangman(state.remaining_errors));
     if state.remaining_letters == 0 {
-        println!("You Won!");
+        println!("\tYou Won!");
     } else if state.remaining_errors == 0 {
-        println!("You Lose!");
+        println!("\tYou Lose!");
     }
 }
 
@@ -72,10 +74,15 @@ fn is_good_guess(guess: &char, state: &mut State, word: &Vec<char>) -> bool {
     return found;
 }
 
+fn clear_terminal() {
+    print!("\x1b[2J\x1b[H");
+}
+
 fn draw_hangman(remaining_errors: u8) -> String {
     match remaining_errors {
         0 => {
-            return "       _ _
+            return "      ___
+     |   ¦
      |   O
      |  /|\\
      |   |
@@ -83,7 +90,8 @@ fn draw_hangman(remaining_errors: u8) -> String {
                 .to_string();
         }
         1 => {
-            return "       _ _
+            return "      ___
+     |   ¦
      |   O
      |  /|\\
      |   |
@@ -91,7 +99,8 @@ fn draw_hangman(remaining_errors: u8) -> String {
                 .to_string();
         }
         2 => {
-            return "       _ _
+            return "      ___
+     |   ¦
      |   O
      |  /|\\
      |   |
@@ -99,7 +108,8 @@ fn draw_hangman(remaining_errors: u8) -> String {
             .to_string();
         }
         3 => {
-            return "       _ _
+            return "      ___
+     |   ¦
      |   O
      |  /|\\
      |   
@@ -107,7 +117,8 @@ fn draw_hangman(remaining_errors: u8) -> String {
             .to_string();
         }
         4 => {
-            return "       _ _
+            return "      ___
+     |   ¦
      |   O
      |  /|
      |   
@@ -115,7 +126,8 @@ fn draw_hangman(remaining_errors: u8) -> String {
             .to_string();
         }
         5 => {
-            return "       _ _
+            return "      ___
+     |   ¦
      |   O
      |  /
      |   
@@ -123,7 +135,8 @@ fn draw_hangman(remaining_errors: u8) -> String {
             .to_string();
         }
         6 => {
-            return "       _ _
+            return "      ___
+     |   ¦
      |   O
      |  
      |   
@@ -131,7 +144,8 @@ fn draw_hangman(remaining_errors: u8) -> String {
             .to_string();
         }
         _ => {
-            return "       _ _
+            return "      ___
+     |   ¦
      |   
      |  
      |   
