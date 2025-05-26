@@ -4,16 +4,30 @@ struct State {
     guess_vec: Vec<char>,
     remaining_letters: usize,
     remaining_errors: u8,
+    num_words: u8,
 }
 
 fn main() {
-    let word: Vec<char> = ask_word();
+    let mut word: Vec<char> = ask_word();
     let word_size: usize = word.len();
     let mut state = State {
         guess_vec: vec!['_'; word_size],
         remaining_letters: word_size,
         remaining_errors: 7,
+        num_words: 1,
     };
+
+    for i in 0..word_size {
+        if word[i] == ' ' {
+            state.guess_vec[i] = ' ';
+            state.remaining_letters -= 1;
+            state.num_words += 1;
+        } else if word[i].is_alphanumeric() {
+            println!("{}", word[i]);
+            word[i] = word[i].to_ascii_lowercase();
+            println!("{}", word[i]);
+        }
+    }
 
     while state.remaining_letters > 0 && state.remaining_errors > 0 {
         clear_terminal();
@@ -22,7 +36,8 @@ fn main() {
         for i in 0..word_size {
             print!("{} ", state.guess_vec[i]);
         }
-        println!("\n\n{} Letters Remaining", state.remaining_letters);
+        println!("\n\n{} Words", state.num_words);
+        println!("{} Letters Remaining", state.remaining_letters);
         println!("{} Errors Remaining", state.remaining_errors);
         let guess: char = ask_guess();
         if !is_good_guess(&guess, &mut state, &word) {
